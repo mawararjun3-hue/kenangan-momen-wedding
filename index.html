@@ -648,7 +648,7 @@ nav a{min-height:40px;display:inline-flex;align-items:center}
 <div class="interlude reveal" id="trioB"><div class="trio"><figure class="t t1"><img alt=""></figure><figure class="t t2"><img alt=""></figure><figure class="t t3"><img alt=""></figure></div><p class="quote">Terima kasih telah menjadi bagian dari hari bahagia kami.</p></div>
 
 </main>
-<footer class="footer"><div class="thanks">Dengan cinta,</div><div class="fnames">Mawar &amp; Arjun</div><div>7 November 2026</div><div class="hashtag">#Mawarjuniverse</div><small>Mohon unggah hanya foto dan video yang kamu miliki izin untuk membagikannya.</small><a id="admLink" class="admlink" href="#admin">Admin</a></footer>
+<footer class="footer"><div class="thanks">Dengan cinta,</div><div class="fnames">Mawar &amp; Arjun</div><div>7 November 2026</div><div class="hashtag">#Mawarjuniverse</div><a id="admLink" class="admlink" href="#admin">Admin</a></footer>
 
 <div class="adm" id="adminPanel" hidden role="dialog" aria-modal="true" aria-label="Panel admin">
  <div class="adm-bar"><strong>Panel Admin</strong><span class="note" id="admUser"></span><button type="button" class="btn alt" id="admOut" hidden>Keluar</button><button type="button" id="admClose">Tutup</button></div>
@@ -712,7 +712,7 @@ const CONFIG = {
   COUPLE_NAMES: "MAWAR & ARJUN",
   // Musik latar: kosongkan untuk memakai aransemen piano romantis bawaan,
   // atau isi alamat file (mis. "musik.mp3" di folder yang sama, atau URL).
-  MUSIC_URL: "a-thousand-years.mp3"
+  MUSIC_URL: ""
 };
 const BUCKET = "kenangan-tamu";
 const TABLE = "kenangan-pernikahan";
@@ -1053,9 +1053,10 @@ async function loadAudio() {
     const el = $("audioList");
     el.innerHTML = "";
     for (const item of items) {
+      if (!item.signed_url) continue; // rekaman tanpa file tidak ditampilkan
       const d = document.createElement("div");
       d.className = "audioitem";
-      d.innerHTML = `<strong>${safe(item.nama_tamu || "Tamu")}</strong> <span class="note">${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span>${item.signed_url ? `<audio controls preload="metadata" src="${safe(item.signed_url)}"></audio>` : `<p class="note danger">Pesan suara ini belum dapat diputar.</p>`}`;
+      d.innerHTML = `<strong>${safe(item.nama_tamu || "Tamu")}</strong> <span class="note">${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span><audio controls preload="metadata" src="${safe(item.signed_url)}"></audio>`;
       el.appendChild(d);
     }
   } catch (e) {
@@ -1365,15 +1366,14 @@ async function saveVoice(name) {
     a.addEventListener("timeupdate", back);
     a.currentTime = 1e101;
   }, true);
-  // Jika file tidak bisa diputar, tampilkan keterangan, bukan pemutar kosong
+  // Jika file tidak bisa diputar, sembunyikan seluruh item tanpa pesan error
   list.addEventListener("error", e => {
     const a = e.target;
     if (a.tagName !== "AUDIO" || a.dataset.failed) return;
     a.dataset.failed = "1";
-    const n = document.createElement("p");
-    n.className = "note danger";
-    n.textContent = "Rekaman ini tidak dapat diputar (file kosong atau formatnya tidak didukung).";
-    a.replaceWith(n);
+    console.warn("Rekaman suara dilewati (tidak bisa diputar):", a.currentSrc || a.src);
+    const row = a.closest(".audioitem");
+    (row || a).remove();
   }, true);
 })();
 
