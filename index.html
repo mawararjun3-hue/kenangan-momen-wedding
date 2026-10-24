@@ -7,6 +7,8 @@
 <style>
 :root{--bg:#f7f2eb;--paper:#fffdf9;--ink:#37352f;--muted:#77736a;--sage:#687b68;--line:#e7ded2;--rose:#b98f83}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button,.btn{cursor:pointer;border:0;border-radius:999px;padding:12px 18px;background:var(--sage);color:white;text-decoration:none;display:inline-block}button:disabled{opacity:.5;cursor:not-allowed}.wrap{max-width:980px;margin:auto;padding:22px}.hero{min-height:72vh;display:grid;place-items:center;text-align:center;padding:50px 20px;background:linear-gradient(#f7f2ebd9,#f7f2ebed),radial-gradient(ellipse at top,#e5d5c8,#f7f2eb 65%)}.eyebrow{letter-spacing:.24em;text-transform:uppercase;color:var(--rose);font:12px Arial,sans-serif}.hero h1{font-size:clamp(34px,7vw,66px);font-weight:normal;line-height:1.1;margin:22px 0;letter-spacing:.04em}.date{font:14px Arial,sans-serif;letter-spacing:.12em;color:var(--muted)}.hero p{max-width:530px;margin:22px auto;color:var(--muted);line-height:1.7}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}.btn.alt{background:transparent;color:var(--sage);border:1px solid var(--sage)}nav{position:sticky;top:0;background:#f7f2ebed;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:2}.navinner{max-width:980px;margin:auto;display:flex;gap:8px;overflow:auto;padding:10px 18px}nav a{white-space:nowrap;color:var(--ink);text-decoration:none;padding:9px 12px;font:13px Arial,sans-serif}.section{padding:54px 0;scroll-margin-top:65px}.section h2{text-align:center;font-size:34px;font-weight:normal;margin:0 0 10px}.sub{text-align:center;color:var(--muted);line-height:1.6;margin:0 auto 28px;max-width:600px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:7px;margin:12px 0;font:14px Arial,sans-serif}.field input,.field textarea,.field select{border:1px solid var(--line);border-radius:10px;padding:12px;background:white;color:var(--ink);width:100%}.field textarea{min-height:100px;resize:vertical}.note{font:13px/1.6 Arial,sans-serif;color:var(--muted)}.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.tile{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}.tile img,.tile video{width:100%;height:170px;object-fit:cover;display:block;background:#ece6dd}.tile .meta{padding:10px;font:12px/1.5 Arial,sans-serif;color:var(--muted);overflow-wrap:anywhere}.wish{padding:14px 0;border-bottom:1px solid var(--line)}.wish:last-child{border-bottom:0}.wish strong{font:13px Arial,sans-serif}.wish p{line-height:1.6;margin:8px 0}.audioitem{padding:12px 0;border-bottom:1px solid var(--line);font:13px Arial,sans-serif}audio{width:100%;margin-top:8px}.status{margin-top:10px;font:13px/1.5 Arial,sans-serif;color:var(--sage);white-space:pre-wrap}.danger{color:#9b4b42}.footer{text-align:center;padding:35px 15px;color:var(--muted);font:12px Arial,sans-serif}#setupWarning{background:#fff3cd;border:1px solid #e5cf83;color:#5e4b17;padding:14px;border-radius:12px;font:13px/1.6 Arial,sans-serif;margin:18px 0}
+
+.tile img{cursor:zoom-in}.lightbox{position:fixed;inset:0;background:#000000ee;z-index:50;display:none;align-items:center;justify-content:center;overflow:hidden;touch-action:none}.lightbox.open{display:flex}.lightbox img{max-width:94vw;max-height:84vh;object-fit:contain;transition:transform .2s ease;cursor:zoom-in;user-select:none;-webkit-user-drag:none}.lightbox img.zoomed{transform:scale(2.4);cursor:zoom-out}.lb-btn{position:absolute;background:#ffffff26;color:#fff;border:0;width:46px;height:46px;border-radius:50%;font-size:24px;line-height:1;padding:0;display:grid;place-items:center}.lb-close{top:max(14px,env(safe-area-inset-top));right:14px}.lb-prev{left:12px;top:50%;transform:translateY(-50%)}.lb-next{right:12px;top:50%;transform:translateY(-50%)}.lb-count{position:absolute;bottom:max(16px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:#fff;font:13px Arial,sans-serif;opacity:.85}
 </style>
 </head>
 <body>
@@ -86,6 +88,13 @@
 </main>
 <footer class="footer">Dibuat dengan cinta • Mawarda &amp; Arjun • 7 November 2026<br>Mohon unggah hanya foto dan video yang kamu miliki izin untuk membagikannya.</footer>
 
+<div class="lightbox" id="lightbox" aria-hidden="true">
+ <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Tutup">&times;</button>
+ <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Foto sebelumnya">&#8249;</button>
+ <img id="lbImg" alt="">
+ <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Foto berikutnya">&#8250;</button>
+ <div class="lb-count" id="lbCount"></div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===================== CONFIG =====================
@@ -96,7 +105,7 @@ const CONFIG = {
   SUPABASE_ANON_KEY: "sb_publishable_votbxg24pKg_k2f1RR4Hhw_xYOjTvgM",
   COUPLE_NAMES: "MAWARDA SHOLEHA & ARJUN NUR ALFANTORI"
 };
-const BUCKET = "kenangan-pernikahan";
+const BUCKET = "kenangan-tamu";
 const TABLE = "kenangan-pernikahan";
 const SIGN_FUNCTION = "smooth-service";
 // ==================================================
@@ -154,13 +163,27 @@ async function uploadMedia(file, name, kind) {
 
 // ---------- Ambil signed URL lewat Edge Function ----------
 async function addSignedUrls(items) {
-  await Promise.all(items.map(async item => {
+  if (!items.length) return items;
+  // Cara 1: langsung lewat Storage Supabase (tanpa Edge Function), berlaku 1 jam
+  try {
+    const paths = items.map(i => i.lokasi_file);
+    const { data, error } = await db.storage.from(BUCKET).createSignedUrls(paths, 3600);
+    if (error) throw error;
+    const map = {};
+    (data || []).forEach(d => { if (d.signedUrl) map[d.path] = d.signedUrl; });
+    items.forEach(i => { i.signed_url = map[i.lokasi_file] || ""; });
+    if (items.every(i => i.signed_url)) return items;
+  } catch (err) {
+    console.error("Signed URL langsung gagal:", err);
+  }
+  // Cara 2 (cadangan): lewat Edge Function
+  await Promise.all(items.filter(i => !i.signed_url).map(async item => {
     try {
       const { data: result, error } = await db.functions.invoke(SIGN_FUNCTION, { body: { path: item.lokasi_file } });
       if (error) throw error;
       item.signed_url = result.signedUrl;
     } catch (err) {
-      console.error("Gagal membuat tautan file:", err);
+      console.error("Gagal membuat tautan file:", item.lokasi_file, err);
       item.signed_url = "";
     }
   }));
@@ -270,7 +293,10 @@ $("saveAudioBtn").addEventListener("click", async () => {
 // ---------- Tampilan galeri ----------
 function renderGallery(items, target) {
   const el = $(target);
+  const isAlbum = target === "coupleGallery";
   el.innerHTML = "";
+  const photos = items.filter(i => i.signed_url && !/\.(mp4|mov|webm|m4v)$/i.test(i.lokasi_file || ""))
+                      .map(i => ({ url: i.signed_url, name: i.nama_tamu || "Tamu" }));
   for (const item of items) {
     const box = document.createElement("div");
     box.className = "tile";
@@ -278,12 +304,79 @@ function renderGallery(items, target) {
     const isVideo = /\.(mp4|mov|webm|m4v)$/i.test(item.lokasi_file || "");
     const media = isVideo
       ? `<video controls playsinline preload="metadata" src="${safe(url)}"></video>`
-      : `<img loading="lazy" src="${safe(url)}" alt="Kenangan dari ${safe(item.nama_tamu || "Tamu")}">`;
-    box.innerHTML = media +
+      : `<img loading="lazy" src="${safe(url)}" alt="${isAlbum ? "Foto prewedding" : "Kenangan dari " + safe(item.nama_tamu || "Tamu")}">`;
+    // Album mempelai: tanpa keterangan nama dan tanggal
+    const meta = isAlbum ? "" :
       `<div class="meta">${safe(item.nama_tamu || "Tamu")}<br><span>${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span></div>`;
+    box.innerHTML = media + meta;
+    if (!isVideo && url) {
+      const img = box.querySelector("img");
+      const idx = photos.findIndex(p => p.url === url);
+      img.addEventListener("click", () => openLightbox(photos, idx));
+    }
     el.appendChild(box);
   }
 }
+
+// ---------- Tampilan layar penuh (zoom) ----------
+let lbList = [], lbIndex = 0, lbStartX = null;
+function lbShow() {
+  const img = $("lbImg");
+  img.classList.remove("zoomed");
+  img.style.transformOrigin = "center";
+  img.src = lbList[lbIndex].url;
+  img.alt = lbList[lbIndex].name;
+  $("lbCount").textContent = (lbIndex + 1) + " / " + lbList.length;
+  const many = lbList.length > 1;
+  $("lbPrev").hidden = !many;
+  $("lbNext").hidden = !many;
+}
+function openLightbox(list, index) {
+  if (!list.length || index < 0) return;
+  lbList = list; lbIndex = index;
+  lbShow();
+  $("lightbox").classList.add("open");
+  $("lightbox").setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+function closeLightbox() {
+  $("lightbox").classList.remove("open");
+  $("lightbox").setAttribute("aria-hidden", "true");
+  $("lbImg").src = "";
+  document.body.style.overflow = "";
+}
+function lbMove(step) {
+  if (lbList.length < 2) return;
+  lbIndex = (lbIndex + step + lbList.length) % lbList.length;
+  lbShow();
+}
+$("lbClose").addEventListener("click", closeLightbox);
+$("lbPrev").addEventListener("click", e => { e.stopPropagation(); lbMove(-1); });
+$("lbNext").addEventListener("click", e => { e.stopPropagation(); lbMove(1); });
+$("lightbox").addEventListener("click", e => { if (e.target === $("lightbox")) closeLightbox(); });
+// Ketuk foto untuk memperbesar / memperkecil
+$("lbImg").addEventListener("click", e => {
+  const img = $("lbImg");
+  if (!img.classList.contains("zoomed")) {
+    const r = img.getBoundingClientRect();
+    img.style.transformOrigin = ((e.clientX - r.left) / r.width * 100) + "% " + ((e.clientY - r.top) / r.height * 100) + "%";
+  }
+  img.classList.toggle("zoomed");
+});
+// Geser kiri/kanan untuk pindah foto
+$("lightbox").addEventListener("touchstart", e => { lbStartX = e.touches[0].clientX; }, { passive: true });
+$("lightbox").addEventListener("touchend", e => {
+  if (lbStartX === null || $("lbImg").classList.contains("zoomed")) { lbStartX = null; return; }
+  const dx = e.changedTouches[0].clientX - lbStartX;
+  lbStartX = null;
+  if (Math.abs(dx) > 50) lbMove(dx < 0 ? 1 : -1);
+});
+document.addEventListener("keydown", e => {
+  if (!$("lightbox").classList.contains("open")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") lbMove(-1);
+  if (e.key === "ArrowRight") lbMove(1);
+});
 
 async function loadGallery() {
   if (!db) return;
@@ -325,7 +418,7 @@ async function loadAudio() {
     for (const item of items) {
       const d = document.createElement("div");
       d.className = "audioitem";
-      d.innerHTML = `<strong>${safe(item.nama_tamu || "Tamu")}</strong> <span class="note">${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span><audio controls preload="none" src="${safe(item.signed_url)}"></audio>`;
+      d.innerHTML = `<strong>${safe(item.nama_tamu || "Tamu")}</strong> <span class="note">${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span>${item.signed_url ? `<audio controls preload="metadata" src="${safe(item.signed_url)}"></audio>` : `<p class="note danger">Pesan suara ini belum dapat diputar.</p>`}`;
       el.appendChild(d);
     }
   } catch (e) {
