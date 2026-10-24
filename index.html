@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f2eb">
+<title>Mawarda &amp; Arjun • Wedding Memories</title>
+<style>
+:root{--bg:#f7f2eb;--paper:#fffdf9;--ink:#37352f;--muted:#77736a;--sage:#687b68;--line:#e7ded2;--rose:#b98f83}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,'Times New Roman',serif}button,input,textarea,select{font:inherit}button,.btn{cursor:pointer;border:0;border-radius:999px;padding:12px 18px;background:var(--sage);color:white;text-decoration:none;display:inline-block}button:disabled{opacity:.5;cursor:not-allowed}.wrap{max-width:980px;margin:auto;padding:22px}.hero{min-height:72vh;display:grid;place-items:center;text-align:center;padding:50px 20px;background:linear-gradient(#f7f2ebd9,#f7f2ebed),radial-gradient(ellipse at top,#e5d5c8,#f7f2eb 65%)}.eyebrow{letter-spacing:.24em;text-transform:uppercase;color:var(--rose);font:12px Arial,sans-serif}.hero h1{font-size:clamp(34px,7vw,66px);font-weight:normal;line-height:1.1;margin:22px 0;letter-spacing:.04em}.date{font:14px Arial,sans-serif;letter-spacing:.12em;color:var(--muted)}.hero p{max-width:530px;margin:22px auto;color:var(--muted);line-height:1.7}.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}.btn.alt{background:transparent;color:var(--sage);border:1px solid var(--sage)}nav{position:sticky;top:0;background:#f7f2ebed;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:2}.navinner{max-width:980px;margin:auto;display:flex;gap:8px;overflow:auto;padding:10px 18px}nav a{white-space:nowrap;color:var(--ink);text-decoration:none;padding:9px 12px;font:13px Arial,sans-serif}.section{padding:54px 0;scroll-margin-top:65px}.section h2{text-align:center;font-size:34px;font-weight:normal;margin:0 0 10px}.sub{text-align:center;color:var(--muted);line-height:1.6;margin:0 auto 28px;max-width:600px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:7px;margin:12px 0;font:14px Arial,sans-serif}.field input,.field textarea,.field select{border:1px solid var(--line);border-radius:10px;padding:12px;background:white;color:var(--ink);width:100%}.field textarea{min-height:100px;resize:vertical}.note{font:13px/1.6 Arial,sans-serif;color:var(--muted)}.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}.tile{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}.tile img,.tile video{width:100%;height:170px;object-fit:cover;display:block;background:#ece6dd}.tile .meta{padding:10px;font:12px/1.5 Arial,sans-serif;color:var(--muted);overflow-wrap:anywhere}.wish{padding:14px 0;border-bottom:1px solid var(--line)}.wish:last-child{border-bottom:0}.wish strong{font:13px Arial,sans-serif}.wish p{line-height:1.6;margin:8px 0}.audioitem{padding:12px 0;border-bottom:1px solid var(--line);font:13px Arial,sans-serif}audio{width:100%;margin-top:8px}.status{margin-top:10px;font:13px/1.5 Arial,sans-serif;color:var(--sage);white-space:pre-wrap}.danger{color:#9b4b42}.footer{text-align:center;padding:35px 15px;color:var(--muted);font:12px Arial,sans-serif}#setupWarning{background:#fff3cd;border:1px solid #e5cf83;color:#5e4b17;padding:14px;border-radius:12px;font:13px/1.6 Arial,sans-serif;margin:18px 0}
+</style>
+</head>
+<body>
+<header class="hero">
+ <div>
+  <div class="eyebrow">The Wedding Of</div>
+  <h1 id="coupleTitle">MAWARDA SHOLEHA<br>&amp; ARJUN NUR ALFANTORI</h1>
+  <div class="date">7 NOVEMBER 2026</div>
+  <p>Terima kasih telah menjadi bagian dari cerita kami. Mari simpan foto, video, suara, dan doa dari hari yang istimewa ini dalam satu tempat.</p>
+  <div class="actions"><a class="btn" href="#share">Bagikan Kenangan</a><a class="btn alt" href="#album">Album Mempelai</a></div>
+ </div>
+</header>
+<nav><div class="navinner"><a href="#share">Unggah Momen</a><a href="#gallery">Galeri Tamu</a><a href="#voice">Pesan Suara</a><a href="#wishes">Ucapan &amp; Doa</a><a href="#album">Album Mempelai</a></div></nav>
+<main class="wrap">
+
+<div id="setupWarning">Mode pratinjau: penyimpanan bersama belum aktif. Isi <b>SUPABASE_ANON_KEY</b> pada bagian CONFIG di file ini agar unggahan tamu bisa tersimpan.</div>
+
+<section class="section" id="share">
+ <h2>Bagikan Momenmu</h2>
+ <p class="sub">Pilih foto atau video, tuliskan nama, lalu bagikan momen yang ingin kami kenang.</p>
+ <div class="panel">
+  <form id="uploadForm">
+   <label class="field">Nama kamu<input id="guestName" maxlength="60" required placeholder="Contoh: Rina &amp; keluarga"></label>
+   <label class="field">Pilih foto atau video<input id="mediaFile" type="file" accept="image/*,video/*" required></label>
+   <p class="note">Batas ukuran: foto maksimal 8 MB, video maksimal 25 MB.</p>
+   <button id="uploadBtn" type="submit">Unggah momen</button>
+   <div class="status" id="uploadStatus"></div>
+  </form>
+ </div>
+</section>
+
+<section class="section" id="gallery">
+ <h2>Galeri Kenangan</h2>
+ <p class="sub">Momen yang dibagikan oleh keluarga dan sahabat.</p>
+ <div class="gallery" id="guestGallery"></div>
+ <p class="note" id="galleryEmpty" style="text-align:center">Belum ada unggahan yang ditampilkan.</p>
+</section>
+
+<section class="section" id="voice">
+ <h2>Pesan Suara</h2>
+ <p class="sub">Tinggalkan doa atau pesan singkat dengan suara kamu sendiri.</p>
+ <div class="panel">
+  <label class="field">Nama kamu<input id="voiceName" maxlength="60" placeholder="Nama tamu"></label>
+  <div class="actions" style="justify-content:flex-start">
+   <button id="recordBtn" type="button">Mulai merekam</button>
+   <button id="stopBtn" type="button" class="btn alt" disabled>Berhenti</button>
+  </div>
+  <p class="note">Fitur rekam suara memerlukan izin mikrofon. Jika tidak tersedia, kamu bisa mengirim ucapan tertulis di bawah.</p>
+  <audio id="audioPreview" controls hidden></audio>
+  <button id="saveAudioBtn" type="button" disabled>Simpan pesan suara</button>
+  <div class="status" id="audioStatus"></div>
+  <div id="audioList"></div>
+ </div>
+</section>
+
+<section class="section" id="wishes">
+ <h2>Ucapan &amp; Doa</h2>
+ <p class="sub">Satu pesan baik akan menjadi kenangan yang berharga.</p>
+ <div class="panel">
+  <form id="wishForm">
+   <label class="field">Nama kamu<input id="wishName" maxlength="60" required placeholder="Nama tamu"></label>
+   <label class="field">Pesan untuk mempelai<textarea id="wishText" maxlength="1000" required placeholder="Semoga menjadi keluarga yang sakinah, mawaddah, warahmah..."></textarea></label>
+   <button type="submit">Kirim ucapan</button>
+   <div class="status" id="wishStatus"></div>
+  </form>
+ </div>
+ <div class="panel" id="wishList"><p class="note">Belum ada ucapan.</p></div>
+</section>
+
+<section class="section" id="album">
+ <h2>Album Mempelai</h2>
+ <p class="sub">Kumpulan foto prewedding dan perjalanan kami berdua.</p>
+ <div class="gallery" id="coupleGallery"></div>
+ <p class="note" id="coupleEmpty" style="text-align:center">Album akan ditampilkan di sini.</p>
+</section>
+
+</main>
+<footer class="footer">Dibuat dengan cinta • Mawarda &amp; Arjun • 7 November 2026<br>Mohon unggah hanya foto dan video yang kamu miliki izin untuk membagikannya.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ===================== CONFIG =====================
+// Isi SUPABASE_ANON_KEY dengan anon/publishable key dari Supabase
+// (Project Settings -> API). JANGAN pernah memakai service_role key di sini.
+const CONFIG = {
+  SUPABASE_URL: "https://nchopbgxqbkaagiuuicm.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_votbxg24pKg_k2f1RR4Hhw_xYOjTvgM",
+  COUPLE_NAMES: "MAWARDA SHOLEHA & ARJUN NUR ALFANTORI"
+};
+const BUCKET = "kenangan-pernikahan";
+const TABLE = "kenangan-pernikahan";
+const SIGN_FUNCTION = "smooth-service";
+// ==================================================
+
+let db = null, recorder = null, recordedChunks = [], recordedBlob = null;
+const $ = id => document.getElementById(id);
+
+$("coupleTitle").innerHTML = CONFIG.COUPLE_NAMES
+  .replace(/&/g, "&amp;")
+  .replace(" &amp; ", "<br>&amp; ");
+
+const keyReady = CONFIG.SUPABASE_ANON_KEY && !CONFIG.SUPABASE_ANON_KEY.startsWith("TEMPEL");
+if (window.supabase && CONFIG.SUPABASE_URL && keyReady) {
+  db = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+  $("setupWarning").hidden = true;
+  loadAll();
+} else {
+  // Mode demo: tampilkan ucapan yang tersimpan di perangkat ini
+  renderWishes(JSON.parse(localStorage.getItem("wedding-demo-wishes") || "[]"));
+}
+
+function status(id, msg, isError = false) {
+  $(id).textContent = msg;
+  $(id).classList.toggle("danger", isError);
+}
+function safe(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function sizeOK(file, maxMB) { return file.size <= maxMB * 1024 * 1024; }
+
+// ---------- Upload ke Storage + catat di tabel ----------
+async function uploadMedia(file, name, kind) {
+  if (!db) throw new Error("Penyimpanan belum aktif. Isi SUPABASE_ANON_KEY terlebih dahulu.");
+  const maxMB = kind === "voice" ? 12 : (file.type.startsWith("video/") ? 25 : 8);
+  if (!sizeOK(file, maxMB)) throw new Error("File terlalu besar. Batas foto 8 MB, video 25 MB, audio 12 MB.");
+
+  const ext = (file.name.split(".").pop() || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase() || "bin";
+  const path = `${kind}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await db.storage.from(BUCKET).upload(path, file, {
+    upsert: false,
+    contentType: file.type || "application/octet-stream"
+  });
+  if (error) throw error;
+
+  const { error: insertError } = await db.from(TABLE).insert({
+    nama_tamu: name,
+    jenis_media: kind,
+    lokasi_file: path,
+    keterangan: ""
+  });
+  if (insertError) throw insertError;
+  return path;
+}
+
+// ---------- Ambil signed URL lewat Edge Function ----------
+async function addSignedUrls(items) {
+  await Promise.all(items.map(async item => {
+    try {
+      const { data: result, error } = await db.functions.invoke(SIGN_FUNCTION, { body: { path: item.lokasi_file } });
+      if (error) throw error;
+      item.signed_url = result.signedUrl;
+    } catch (err) {
+      console.error("Gagal membuat tautan file:", err);
+      item.signed_url = "";
+    }
+  }));
+  return items;
+}
+
+// ---------- Form unggah foto/video ----------
+$("uploadForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const file = $("mediaFile").files[0], name = $("guestName").value.trim();
+  if (!file) return;
+  $("uploadBtn").disabled = true;
+  status("uploadStatus", "Sedang mengunggah...");
+  try {
+    await uploadMedia(file, name, "guest");
+    status("uploadStatus", "Berhasil diunggah. Terima kasih sudah berbagi kenangan!");
+    $("uploadForm").reset();
+    await loadGallery();
+  } catch (err) {
+    status("uploadStatus", err.message || "Unggahan gagal.", true);
+  } finally {
+    $("uploadBtn").disabled = false;
+  }
+});
+
+// ---------- Form ucapan ----------
+$("wishForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = $("wishName").value.trim(), message = $("wishText").value.trim();
+  try {
+    if (db) {
+      const { error } = await db.from("ucapan_tamu").insert({ nama_tamu: name, ucapan: message });
+      if (error) throw error;
+      status("wishStatus", "Ucapan berhasil dikirim. Terima kasih!");
+      $("wishForm").reset();
+      await loadWishes();
+    } else {
+      const list = JSON.parse(localStorage.getItem("wedding-demo-wishes") || "[]");
+      list.unshift({ guest_name: name, message, created_at: new Date().toISOString() });
+      localStorage.setItem("wedding-demo-wishes", JSON.stringify(list));
+      status("wishStatus", "Ucapan tersimpan hanya di perangkat ini sebagai demo, belum bisa dilihat tamu lain.");
+      renderWishes(list);
+      $("wishForm").reset();
+    }
+  } catch (err) {
+    status("wishStatus", err.message || "Ucapan gagal dikirim.", true);
+  }
+});
+
+// ---------- Rekam suara ----------
+$("recordBtn").addEventListener("click", async () => {
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    status("audioStatus", "Browser ini belum mendukung perekaman suara. Coba Chrome/Safari terbaru atau gunakan ucapan tertulis.", true);
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    recordedBlob = null;
+    $("saveAudioBtn").disabled = true;
+    recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = e => { if (e.data.size) recordedChunks.push(e.data); };
+    recorder.onstop = () => {
+      recordedBlob = new Blob(recordedChunks, { type: recorder.mimeType || "audio/webm" });
+      $("audioPreview").src = URL.createObjectURL(recordedBlob);
+      $("audioPreview").hidden = false;
+      $("saveAudioBtn").disabled = false;
+      stream.getTracks().forEach(t => t.stop());
+      status("audioStatus", "Rekaman siap. Dengarkan dulu, lalu simpan.");
+    };
+    recorder.start();
+    $("recordBtn").disabled = true;
+    $("stopBtn").disabled = false;
+    status("audioStatus", "Sedang merekam… tekan Berhenti jika selesai");
+  } catch (err) {
+    status("audioStatus", "Izin mikrofon tidak tersedia atau ditolak. " + err.message, true);
+  }
+});
+
+$("stopBtn").addEventListener("click", () => {
+  if (recorder && recorder.state !== "inactive") {
+    recorder.stop();
+    $("recordBtn").disabled = false;
+    $("stopBtn").disabled = true;
+  }
+});
+
+$("saveAudioBtn").addEventListener("click", async () => {
+  if (!recordedBlob) return;
+  const name = $("voiceName").value.trim() || "Tamu";
+  $("saveAudioBtn").disabled = true;
+  status("audioStatus", "Menyimpan pesan suara...");
+  try {
+    const ext = recordedBlob.type.includes("mp4") ? "m4a" : "webm";
+    const file = new File([recordedBlob], `pesan-suara.${ext}`, { type: recordedBlob.type });
+    await uploadMedia(file, name, "voice");
+    status("audioStatus", "Pesan suara berhasil disimpan. Terima kasih!");
+    recordedBlob = null;
+    $("audioPreview").hidden = true;
+    await loadAudio();
+  } catch (err) {
+    status("audioStatus", err.message || "Pesan suara gagal disimpan.", true);
+    $("saveAudioBtn").disabled = false;
+  }
+});
+
+// ---------- Tampilan galeri ----------
+function renderGallery(items, target) {
+  const el = $(target);
+  el.innerHTML = "";
+  for (const item of items) {
+    const box = document.createElement("div");
+    box.className = "tile";
+    const url = item.signed_url || "";
+    const isVideo = /\.(mp4|mov|webm|m4v)$/i.test(item.lokasi_file || "");
+    const media = isVideo
+      ? `<video controls playsinline preload="metadata" src="${safe(url)}"></video>`
+      : `<img loading="lazy" src="${safe(url)}" alt="Kenangan dari ${safe(item.nama_tamu || "Tamu")}">`;
+    box.innerHTML = media +
+      `<div class="meta">${safe(item.nama_tamu || "Tamu")}<br><span>${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span></div>`;
+    el.appendChild(box);
+  }
+}
+
+async function loadGallery() {
+  if (!db) return;
+  try {
+    const { data, error } = await db.from(TABLE).select("*")
+      .eq("jenis_media", "guest").order("created_at", { ascending: false }).limit(100);
+    if (error) throw error;
+    const items = await addSignedUrls(data || []);
+    renderGallery(items, "guestGallery");
+    $("galleryEmpty").hidden = items.length > 0;
+  } catch (e) {
+    status("uploadStatus", "Galeri belum dapat dimuat: " + e.message, true);
+  }
+}
+
+async function loadCouple() {
+  if (!db) return;
+  try {
+    const { data, error } = await db.from(TABLE).select("*")
+      .eq("jenis_media", "couple").order("created_at", { ascending: false }).limit(100);
+    if (error) throw error;
+    const items = await addSignedUrls(data || []);
+    renderGallery(items, "coupleGallery");
+    $("coupleEmpty").hidden = items.length > 0;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadAudio() {
+  if (!db) return;
+  try {
+    const { data, error } = await db.from(TABLE).select("*")
+      .eq("jenis_media", "voice").order("created_at", { ascending: false }).limit(50);
+    if (error) throw error;
+    const items = await addSignedUrls(data || []);
+    const el = $("audioList");
+    el.innerHTML = "";
+    for (const item of items) {
+      const d = document.createElement("div");
+      d.className = "audioitem";
+      d.innerHTML = `<strong>${safe(item.nama_tamu || "Tamu")}</strong> <span class="note">${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span><audio controls preload="none" src="${safe(item.signed_url)}"></audio>`;
+      el.appendChild(d);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function renderWishes(items) {
+  const el = $("wishList");
+  if (!items.length) {
+    el.innerHTML = '<p class="note">Belum ada ucapan.</p>';
+    return;
+  }
+  el.innerHTML = items.map(w => `
+    <div class="wish">
+      <strong>${safe(w.nama_tamu || w.guest_name || "")}</strong>
+      <p>${safe(w.ucapan || w.message || "").replace(/\n/g, "<br>")}</p>
+      <span class="note">${new Date(w.created_at || Date.now()).toLocaleDateString("id-ID")}</span>
+    </div>
+  `).join("");
+}
+
+async function loadWishes() {
+  if (!db) return;
+  const { data, error } = await db.from("ucapan_tamu").select("*")
+    .order("created_at", { ascending: false }).limit(100);
+  if (!error) renderWishes(data || []);
+}
+
+function loadAll() {
+  loadGallery();
+  loadCouple();
+  loadAudio();
+  loadWishes();
+}
+</script>
+</body>
+</html>
