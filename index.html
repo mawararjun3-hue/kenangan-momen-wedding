@@ -1028,19 +1028,36 @@ async function loadGallery() {
   }
 }
 
+// Album mempelai: ambil dari Supabase (jenis_media = couple); bila kosong, ambil dari folder "foto prewed" di GitHub
+async function loadCoupleFromGithub() {
+  const api = "https://api.github.com/repos/mawararjun3-hue/kenangan-momen-wedding/contents/" + encodeURIComponent("foto prewed");
+  const res = await fetch(api);
+  if (!res.ok) throw new Error("GitHub API " + res.status);
+  const files = await res.json();
+  return files
+    .filter(f => f.type === "file" && /\.(jpe?g|png|webp|gif)$/i.test(f.name))
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+    .map(f => ({ id: f.sha, lokasi_file: f.path, nama_tamu: "", signed_url: "foto%20prewed/" + encodeURIComponent(f.name) }));
+}
+
 async function loadCouple() {
-  if (!db) return;
+  let items = [];
   try {
-    const { data, error } = await db.from(TABLE).select("*")
-      .eq("jenis_media", "couple").order("created_at", { ascending: false }).limit(100);
-    if (error) throw error;
-    const items = await addSignedUrls(data || []);
-    renderGallery(items, "coupleGallery");
-    applyTrios(items);
-    $("coupleEmpty").hidden = items.length > 0;
+    if (db) {
+      const { data, error } = await db.from(TABLE).select("*")
+        .eq("jenis_media", "couple").order("created_at", { ascending: false }).limit(100);
+      if (error) throw error;
+      items = await addSignedUrls(data || []);
+    }
   } catch (e) {
     console.error(e);
   }
+  if (!items.length) {
+    try { items = await loadCoupleFromGithub(); } catch (e) { console.error("Album GitHub gagal:", e); }
+  }
+  renderGallery(items, "coupleGallery");
+  applyTrios(items);
+  $("coupleEmpty").hidden = items.length > 0;
 }
 
 async function loadAudio() {
