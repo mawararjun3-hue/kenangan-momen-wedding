@@ -944,8 +944,19 @@ function renderGallery(items, target) {
     // Album mempelai: tanpa keterangan nama dan tanggal
     const meta = isAlbum ? "" :
       `<div class="meta">${safe(item.nama_tamu || "Tamu")}<br><span>${new Date(item.created_at || Date.now()).toLocaleDateString("id-ID")}</span></div>`;
-    box.innerHTML = media + meta;
-    if (!isVideo && url) {
+      box.innerHTML = media + meta;
+    // Jika file sudah tidak ada di Storage, jangan tampilkan kotak kosong
+    if (!url) continue;
+    const dropBroken = () => {
+      box.remove();
+      if (!isAlbum) {
+        const empty = $("galleryEmpty");
+        if (empty) empty.hidden = el.querySelectorAll(".tile").length > 0;
+      }
+    };
+    const mediaEl = box.querySelector(isVideo ? "video" : "img");
+    if (mediaEl) mediaEl.addEventListener("error", dropBroken, { once: true });
+    if (!isVideo) {
       const img = box.querySelector("img");
       const idx = photos.findIndex(p => p.url === url);
       img.addEventListener("click", () => openLightbox(photos, idx));
@@ -1022,7 +1033,7 @@ async function loadGallery() {
     if (error) throw error;
     const items = await addSignedUrls(data || []);
     renderGallery(items, "guestGallery");
-    $("galleryEmpty").hidden = items.length > 0;
+    $("galleryEmpty").hidden = $("guestGallery").querySelectorAll(".tile").length > 0;
   } catch (e) {
     status("uploadStatus", "Galeri belum dapat dimuat: " + e.message, true);
   }
